@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { IconMapPin, IconSearch, IconInfo, IconMap } from './Icons';
+import { useState } from 'react';
+import { IconMapPin, IconSearch, IconMap } from './Icons';
 
 export function CampusMapSection({ campusData, categories, globalSearch = '' }) {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -20,12 +20,16 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
     return matchesCategory && matchesSearch;
   });
 
-  const handlePinHover = (id) => {
-    setHoveredFacility(id);
-  };
-
   const handlePinClick = (id) => {
     setActiveFacility(id === activeFacility ? null : id);
+  };
+
+  const selectFacility = (id) => {
+    setActiveFacility(id);
+    document.getElementById(`facility-${id}`)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   };
 
   return (
@@ -43,12 +47,13 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
 
         {/* Filters */}
         <div className="filter-row">
-          <div className="filter-pills">
+          <div className="filter-pills" aria-label="Filter facilities by category">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`filter-pill ${activeCategory === cat ? 'active' : ''}`}
+                aria-pressed={activeCategory === cat}
               >
                 {cat}
               </button>
@@ -56,7 +61,7 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
           </div>
           
           {!globalSearch && (
-            <div className="search-box">
+            <label className="search-box">
               <IconSearch className="search-icon" size={16} />
               <input
                 type="text"
@@ -64,8 +69,9 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 className="search-input"
+                aria-label="Search campus facilities"
               />
-            </div>
+            </label>
           )}
         </div>
 
@@ -78,16 +84,19 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
             </div>
             
             {filteredFacilities.map(facility => (
-              <div 
+              <button
+                type="button"
                 key={facility.id}
                 className={`map-pin-wrapper ${hoveredFacility === facility.id ? 'is-hovered' : ''} ${activeFacility === facility.id ? 'is-active' : ''}`}
                 style={{ 
                   left: `${facility.coordinates.x}%`, 
                   top: `${facility.coordinates.y}%` 
                 }}
-                onMouseEnter={() => handlePinHover(facility.id)}
+                onMouseEnter={() => setHoveredFacility(facility.id)}
                 onMouseLeave={() => setHoveredFacility(null)}
-                onClick={() => handlePinClick(facility.id)}
+                onClick={() => selectFacility(facility.id)}
+                aria-label={`Show details for ${facility.name}`}
+                aria-pressed={activeFacility === facility.id}
               >
                 <div className="map-pin-pulse"></div>
                 <div className="map-pin-marker">
@@ -96,7 +105,7 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
                 <div className="map-pin-tooltip">
                   {facility.name}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -104,12 +113,12 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
           <div className="facilities-grid">
             {filteredFacilities.length > 0 ? (
               filteredFacilities.map(facility => (
-                <div 
+                <article
                   key={facility.id}
+                  id={`facility-${facility.id}`}
                   className={`facility-card ${hoveredFacility === facility.id || activeFacility === facility.id ? 'is-highlighted' : ''}`}
                   onMouseEnter={() => setHoveredFacility(facility.id)}
                   onMouseLeave={() => setHoveredFacility(null)}
-                  onClick={() => handlePinClick(facility.id)}
                 >
                   <div className="facility-card-header">
                     <div className="facility-icon-badge">
@@ -126,13 +135,20 @@ export function CampusMapSection({ campusData, categories, globalSearch = '' }) 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-sm btn-primary facility-action-btn"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
                     >
-                      <IconMapPin size={14} />
-                      <span>Open in Maps</span>
+                      <IconMapPin size={18} />
+                      <span>Get directions</span>
                     </a>
+                    <button
+                      type="button"
+                      className="btn btn-sm facility-locate-btn"
+                      onClick={() => handlePinClick(facility.id)}
+                      aria-pressed={activeFacility === facility.id}
+                    >
+                      {activeFacility === facility.id ? 'Hide pin' : 'Show on map'}
+                    </button>
                   </div>
-                </div>
+                </article>
               ))
             ) : (
               <div className="empty-state">

@@ -22,7 +22,12 @@ body {
 
 .app-layout {
   min-height: 100vh;
-  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content-wrapper {
+  flex: 1;
 }
 
 .container {
@@ -224,6 +229,12 @@ body {
   cursor: pointer;
   z-index: 10;
   transition: z-index var(--transition-fast);
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: inherit;
 }
 
 .map-pin-wrapper:hover,
@@ -255,7 +266,7 @@ body {
   height: 24px;
   background-color: rgba(59, 130, 246, 0.4);
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: none;
   z-index: -1;
   opacity: 0;
 }
@@ -411,6 +422,8 @@ body {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .btn {
@@ -423,6 +436,17 @@ body {
   cursor: pointer;
   transition: all var(--transition-fast);
   text-decoration: none;
+  min-height: 44px;
+}
+
+.facility-action-btn {
+  gap: 0.45rem;
+}
+
+.facility-locate-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text-primary);
 }
 
 .btn-sm {
@@ -467,4 +491,85 @@ body {
 .empty-state p {
   margin: 0;
   max-width: 300px;
+}
+
+@media (max-width: 767px) {
+  .campus-map-section {
+    padding: 1.25rem 0 2.5rem;
+  }
+
+  .campus-map-section h2 {
+    font-size: 1.65rem;
+  }
+
+  .filter-row {
+    gap: 0.75rem;
+  }
+
+  .search-box {
+    order: -1;
+    max-width: none;
+    min-height: 48px;
+  }
+
+  .filter-pills {
+    width: calc(100vw - 2rem);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0.15rem 0 0.55rem;
+    scrollbar-width: thin;
+  }
+
+  .filter-pill {
+    min-height: 44px;
+    flex: 0 0 auto;
+  }
+
+  .facilities-grid {
+    order: 1;
+  }
+
+  .map-container-interactive {
+    order: 2;
+    min-height: 300px;
+  }
+
+  .facility-card {
+    padding: 1.1rem;
+    cursor: default;
+  }
+
+  .facility-card-footer .btn {
+    flex: 1 1 145px;
+  }
+
+  .map-pin-tooltip {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (hover: none) {
+  .facility-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border);
+  }
+
+  .facility-card.is-highlighted {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

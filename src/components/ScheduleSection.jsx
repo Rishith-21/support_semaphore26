@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EventModal } from './EventModal';
 
 import {
@@ -6,8 +6,7 @@ import {
   IconCalendar,
   IconMapPin,
   IconSearch,
-  IconUser,
-  IconAlertTriangle
+  IconUser
 } from './Icons';
 
 

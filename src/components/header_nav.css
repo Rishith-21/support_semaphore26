@@ -147,7 +147,7 @@
     justify-self: stretch;
   }
 
-  .header-search { order: 2; width: 100%; }
+  .header-search { display: none; }
   .header-links { order: 3; overflow-x: auto; justify-content: flex-start; padding-bottom: 2px; }
   .header-links a { font-size: 16px; white-space: nowrap; }
 }

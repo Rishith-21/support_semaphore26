@@ -6,6 +6,7 @@ const navigationItems = [
   { label: 'Arrival Guide', to: '/arrival' },
   { label: 'Checklist', to: '/checklist' },
   { label: 'FAQ & Rules', to: '/faq' },
+  { label: 'Campus Map', to: '/campus' },
 ];
 
 function HeaderNav() {

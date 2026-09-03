@@ -15,6 +15,7 @@ export function Footer() {
           <Link to="/arrival">Arrival Guide</Link>
           <Link to="/checklist">Checklist</Link>
           <Link to="/faq">FAQ &amp; Rules</Link>
+          <Link to="/campus">Campus Map</Link>
         </div>
         <div className="footer-main-website">
           <h3>Main Website</h3>

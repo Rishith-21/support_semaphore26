@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconCalendar, IconSearch } from './Icons';
 import { EventModal } from './EventModal';
 
