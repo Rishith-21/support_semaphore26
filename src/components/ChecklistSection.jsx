@@ -39,11 +39,9 @@ export function ChecklistSection({ globalSearch = '' }) {
   const [copiedToast, setCopiedToast] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
 
-  useEffect(() => { if (globalSearch) setSearchQuery(globalSearch); }, [globalSearch]);
-
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedItems)); }
-    catch (e) { /* silent */ }
+    catch { /* localStorage may be unavailable */ }
   }, [checkedItems]);
 
   const toggleItem = (id) =>
