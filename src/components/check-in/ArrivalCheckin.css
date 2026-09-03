@@ -366,6 +366,11 @@
    MOBILE — 1 column, left-aligned vertical timeline
    ══════════════════════════════════════════════════════ */
 @media (max-width: 599px) {
+  .ac-steps {
+    position: relative;
+    z-index: 1;
+  }
+
   .ac-step {
     flex-direction: row;
     align-items: flex-start;
@@ -386,6 +391,19 @@
     min-width: 0;
   }
 
+  .ac-dot {
+    display: block;
+    position: absolute;
+    top: 1.05rem;
+    left: calc(3.5rem + 0.5rem - 5px);
+    z-index: 2;
+    width: 10px;
+    height: 10px;
+    margin: 0;
+    border: 2px solid #F8FAFC;
+    border-radius: 50%;
+  }
+
   .ac-card-label {
     letter-spacing: 0.12em;
   }
@@ -402,9 +420,9 @@
   .ac-connector-v {
     display: block;
     position: absolute;
-    top: 0;
-    left: calc(3.5rem + 1.3rem + 6px); /* aligns after number col */
-    bottom: 0;
+    top: 1.35rem;
+    left: calc(3.5rem + 0.5rem - 1px);
+    bottom: 1.35rem;
     width: 2px;
     background: linear-gradient(
       180deg,

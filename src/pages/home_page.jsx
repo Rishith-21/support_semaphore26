@@ -1,32 +1,62 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./home_page.css";
 
 export default function HomePage() {
-  const [introPhase, setIntroPhase] = useState("active"); // active | exit | done
+  const [introPhase, setIntroPhase] = useState(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return sessionStorage.getItem("semaphore-intro-seen") || prefersReducedMotion ? "done" : "active";
+  }); // active | exit | done
+  const [introStarted, setIntroStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [countdown, setCountdown] = useState({ days: '00', hours: '00', minutes: '00' });
 
   useEffect(() => {
-    const exitTimer = setTimeout(() => setIntroPhase("exit"), 3200);
-    const doneTimer = setTimeout(() => setIntroPhase("done"), 4100);
-    return () => { clearTimeout(exitTimer); clearTimeout(doneTimer); };
-  }, []);
+    if (introPhase !== "active" || introStarted) return undefined;
+
+    let secondFrame;
+    let startTimer;
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        startTimer = setTimeout(() => setIntroStarted(true), 100);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      cancelAnimationFrame(secondFrame);
+      clearTimeout(startTimer);
+    };
+  }, [introPhase, introStarted]);
+
+  useEffect(() => {
+    if (introPhase === "active") {
+      if (!introStarted) return undefined;
+      const exitTimer = setTimeout(() => setIntroPhase("exit"), 2200);
+      return () => clearTimeout(exitTimer);
+    }
+
+    if (introPhase === "exit") {
+      const doneTimer = setTimeout(() => {
+        sessionStorage.setItem("semaphore-intro-seen", "true");
+        setIntroPhase("done");
+      }, 600);
+      return () => clearTimeout(doneTimer);
+    }
+
+    return undefined;
+  }, [introPhase, introStarted]);
 
   useEffect(() => {
     if (introPhase !== "done") return;
     const timers = [
-      setTimeout(() => setStep(1),  100),
-      setTimeout(() => setStep(2),  500),
-      setTimeout(() => setStep(3),  950),
-      setTimeout(() => setStep(4), 1350),
-      setTimeout(() => setStep(5), 1650),
-      setTimeout(() => setStep(6), 1900),
-      setTimeout(() => setStep(7), 2200),
-      setTimeout(() => setStep(8), 2700),
-      setTimeout(() => setStep(9), 3050),
-      setTimeout(() => setStep(10), 3400),
-      setTimeout(() => setStep(11), 3750),
-      setTimeout(() => setStep(12), 4100),
+      setTimeout(() => setStep(1), 80),
+      setTimeout(() => setStep(2), 220),
+      setTimeout(() => setStep(3), 360),
+      setTimeout(() => setStep(4), 500),
+      setTimeout(() => setStep(5), 650),
+      setTimeout(() => setStep(6), 800),
+      setTimeout(() => setStep(7), 950),
     ];
     return () => timers.forEach(clearTimeout);
   }, [introPhase]);
@@ -55,7 +85,7 @@ export default function HomePage() {
   return (
     <>
       {introPhase !== "done" && (
-        <div className={`intro-overlay${introPhase === "exit" ? " intro-exit" : ""}`} aria-hidden="true">
+        <div className={`intro-overlay${introStarted ? " intro-ready" : ""}${introPhase === "exit" ? " intro-exit" : ""}`} aria-hidden="true">
 
           {/* noise texture */}
           <div className="intro-noise" />
@@ -116,12 +146,12 @@ export default function HomePage() {
             </p>
 
             <div className="buttons">
-              <a href="/checklist" className={`primary-btn hero-anim delay-4${step >= 5 ? " show" : ""}`}>
+              <Link to="/checklist" className={`primary-btn hero-anim delay-4${step >= 5 ? " show" : ""}`}>
                 Participant Checklist
-              </a>
-              <a href="#contact" className={`secondary-btn hero-anim delay-5${step >= 6 ? " show" : ""}`}>
+              </Link>
+              <Link to="/helpdesk" className={`secondary-btn hero-anim delay-5${step >= 6 ? " show" : ""}`}>
                 Contact Support
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -141,33 +171,30 @@ export default function HomePage() {
         </main>
 
         <section id="help" className="help-section">
-          <p className={`small-title hero-anim${step >= 8 ? " show" : ""}`}>QUICK ASSISTANCE</p>
-          <h2 className={`hero-anim${step >= 9 ? " show" : ""}`}>How can we help?</h2>
+          <p className="small-title">QUICK ASSISTANCE</p>
+          <h2>How can we help?</h2>
 
           <div className="help-grid">
-            <div className={`help-card hero-anim${step >= 10 ? " show" : ""}`}>
+            <div className="help-card">
               <h3>Participant Checklist</h3>
               <p>Check all the documents, campus requirements and event-specific requirements before attending Semaphore Fest.</p>
-              <a href="/checklist" className="card-btn">Open Checklist</a>
+              <Link to="/checklist" className="card-btn">Open Checklist</Link>
             </div>
 
-            <div className={`help-card hero-anim${step >= 11 ? " show" : ""}`}>
+            <div className="help-card">
               <h3>Event Information</h3>
               <p>Find information about events, schedules, venues and participation.</p>
-              <button>View Information</button>
+              <Link to="/events" className="card-btn">Browse Events</Link>
             </div>
 
-            <div className={`help-card hero-anim${step >= 12 ? " show" : ""}`}>
+            <div className="help-card">
               <h3>Contact Support</h3>
               <p>Need help? Reach out to our support team and we'll assist you throughout Semaphore Fest 2026.</p>
-              <a href="mailto:support@semaphorefest.com" className="card-btn">Contact Support</a>
+              <Link to="/helpdesk" className="card-btn">Open Help Desk</Link>
             </div>
           </div>
         </section>
 
-        <footer>
-          <p>© 2026 Semaphore Fest. Support Center.</p>
-        </footer>
       </div>
     </>
   );

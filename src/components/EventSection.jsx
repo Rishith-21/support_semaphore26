@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { IconCalendar, IconSearch } from './Icons';
+import { IconCalendar, IconSearch, IconUser } from './Icons';
 import { EventModal } from './EventModal';
 
-export function EventSection({ events, globalSearch }) {
+export function EventSection({ events, guidelines, globalSearch }) {
   const [localSearch, setLocalSearch] = useState('');
   const [activeModalEvent, setActiveModalEvent] = useState(null);
 
@@ -15,7 +15,8 @@ export function EventSection({ events, globalSearch }) {
     return (
       evt.name.toLowerCase().includes(query) ||
       evt.category.toLowerCase().includes(query) ||
-      (evt.location && evt.location.toLowerCase().includes(query)) ||
+      (evt.description && evt.description.toLowerCase().includes(query)) ||
+      (evt.rules && evt.rules.some((rule) => rule.toLowerCase().includes(query))) ||
       (evt.headDetails?.name && evt.headDetails.name.toLowerCase().includes(query))
     );
   });
@@ -24,16 +25,25 @@ export function EventSection({ events, globalSearch }) {
     <section id="events" className="section-wrapper">
       <div className="container">
         {/* Section Header */}
-        <div className="section-head" style={{ marginBottom: '1.75rem' }}>
+        <div className="section-head events-page-head">
           <div className="section-tag">
             <IconCalendar size={16} />
             <span>Event Directory</span>
           </div>
           <h2>Events & Competitions</h2>
+          <p>Explore every Semaphore 2K26 challenge, check the team size, and open an event for complete rules and coordinator details.</p>
+          <span className="events-count">{events.length} competitions</span>
         </div>
 
+        {guidelines && (
+          <button type="button" className="event-guidelines-banner" onClick={() => setActiveModalEvent(guidelines)}>
+            <span><strong>{guidelines.name}</strong><small>{guidelines.description}</small></span>
+            <span className="event-guidelines-action">Read rules <span aria-hidden="true">→</span></span>
+          </button>
+        )}
+
         {/* Clean Search Input */}
-        <div style={{ maxWidth: '540px', margin: '0 auto 2.25rem auto' }}>
+        <div className="events-search-wrap">
           <div className="search-input-wrapper">
             <IconSearch size={16} className="search-icon" />
             <input
@@ -57,7 +67,15 @@ export function EventSection({ events, globalSearch }) {
               <div
                 key={evt.id}
                 className="event-card-simple"
+                role="button"
+                tabIndex={0}
                 onClick={() => setActiveModalEvent(evt)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setActiveModalEvent(evt);
+                  }
+                }}
               >
                 {/* Event Image */}
                 <div className="event-card-img-wrap">
@@ -67,13 +85,18 @@ export function EventSection({ events, globalSearch }) {
                     className="event-card-img"
                     loading="lazy"
                   />
+                  <span className="event-category-pill">{evt.category}</span>
                 </div>
 
                 {/* Event Name, Category & View More Button */}
                 <div className="event-card-body">
                   <div className="event-card-info">
                     <h3 className="event-card-title">{evt.name}</h3>
-                    <p className="event-card-category">{evt.category}</p>
+                    <p className="event-card-description">{evt.description}</p>
+                    <div className="event-card-meta">
+                      <IconUser size={15} />
+                      <span>{evt.participants} {evt.participants === 1 ? 'participant' : 'participants'}</span>
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -83,7 +106,7 @@ export function EventSection({ events, globalSearch }) {
                     }}
                     className="btn btn-primary btn-sm event-card-btn"
                   >
-                    View More
+                    View details <span aria-hidden="true">→</span>
                   </button>
                 </div>
               </div>

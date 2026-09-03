@@ -104,10 +104,27 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  animation: introReveal 0.2s ease-out both;
+}
+
+@keyframes introReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .intro-overlay.intro-exit {
-  animation: overlayExit 0.9s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: overlayExit 0.6s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+/* Wait for Chrome's first stable paint before running the intro sequence. */
+.intro-overlay:not(.intro-ready) .intro-rule,
+.intro-overlay:not(.intro-ready) .intro-glow,
+.intro-overlay:not(.intro-ready) .intro-tag,
+.intro-overlay:not(.intro-ready) .intro-word,
+.intro-overlay:not(.intro-ready) .intro-underline,
+.intro-overlay:not(.intro-ready) .intro-sub,
+.intro-overlay:not(.intro-ready) .intro-corner {
+  animation: none;
 }
 
 /* subtle noise texture */
@@ -176,7 +193,7 @@ body {
   letter-spacing: 5px;
   text-transform: uppercase;
   opacity: 0;
-  animation: fadeUp 0.6s ease 1.1s forwards;
+  animation: fadeUp 0.45s ease 0.25s forwards;
 }
 
 /* title wrapper */
@@ -206,19 +223,19 @@ body {
 
 .intro-word-1 {
   color: #f8fafc;
-  animation: wordWipe 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.9s forwards;
+  animation: wordWipe 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
 }
 
 .intro-word-2 {
   color: #4F46E5;
-  animation: wordWipe 0.75s cubic-bezier(0.22, 1, 0.36, 1) 1.25s forwards;
+  animation: wordWipe 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.58s forwards;
 }
 
 .intro-word-3 {
   color: #94a3b8;
   font-size: 0.6em;
   letter-spacing: 6px;
-  animation: wordWipe 0.75s cubic-bezier(0.22, 1, 0.36, 1) 1.55s forwards;
+  animation: wordWipe 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.81s forwards;
 }
 
 /* underline */
@@ -229,7 +246,7 @@ body {
   border-radius: 2px;
   transform: scaleX(0);
   transform-origin: left;
-  animation: underlineGrow 0.7s cubic-bezier(0.4, 0, 0.2, 1) 1.9s forwards;
+  animation: underlineGrow 0.5s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
 }
 
 /* sub text */
@@ -239,7 +256,7 @@ body {
   font-weight: 600;
   letter-spacing: 3px;
   opacity: 0;
-  animation: fadeUp 0.6s ease 2.2s forwards;
+  animation: fadeUp 0.45s ease 1.15s forwards;
 }
 
 /* corner marks */
@@ -592,14 +609,6 @@ body {
    FOOTER
 ════════════════════════════════ */
 
-footer {
-  padding: 25px;
-  text-align: center;
-  background: #1E293B;
-  color: #FFFFFF;
-  font-size: 14px;
-}
-
 /* ════════════════════════════════
    RESPONSIVE
 ════════════════════════════════ */
@@ -628,6 +637,9 @@ footer {
   .hero { padding-left: 5%; padding-right: 5%; }
   .hero h1 { font-size: 42px; }
   .help-section { padding-left: 5%; padding-right: 5%; }
+
+  .blob { display: none; }
+  .small-title { animation: none; background-position: center; }
 
   .intro-title { flex-direction: column; align-items: center; gap: 4px; letter-spacing: 2px; }
   .intro-word-3 { font-size: 0.5em; }
