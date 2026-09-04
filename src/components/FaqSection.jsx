@@ -214,7 +214,7 @@ export function FaqSection({ faqData, categories, globalSearch }) {
           position: relative;
           max-width: 650px;
           margin: 0 auto 3rem auto;
-          z-index: 10;
+          z-index: 60;
         }
         .faq-search-bar input {
           width: 100%;
@@ -292,7 +292,7 @@ export function FaqSection({ faqData, categories, globalSearch }) {
           justify-content: center;
           margin-bottom: 3.5rem;
           position: relative;
-          z-index: 20;
+          z-index: 1;
         }
 
         .faq-category-pills {
@@ -486,7 +486,7 @@ export function FaqSection({ faqData, categories, globalSearch }) {
           justify-content: center;
           margin-bottom: 3rem;
           position: relative;
-          z-index: 20;
+          z-index: 1;
         }
         .section-toggle {
           position: relative;
