@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import nitteLogo from '../assets/nitte.png';
+import samcaLogo from '../assets/samca.png';
 import './header_nav.css';
 
 const navigationItems = [
@@ -136,7 +138,7 @@ function HeaderNav() {
 
             <span className="brand-logo nitte-logo">
               <img
-                src="src/assets/nitte.png"
+                src={nitteLogo}
                 alt="NITTE"
               />
             </span>
@@ -152,7 +154,7 @@ function HeaderNav() {
 
             <span className="brand-logo samca-logo">
               <img
-                src="src/assets/samca.png"
+                src={samcaLogo}
                 alt="SAMCA"
               />
             </span>
@@ -174,7 +176,7 @@ function HeaderNav() {
               />
 
               <img
-                src="src/assets/semaphore.png"
+                src="/Events_LOGO/sempahore_logo.png"
                 alt="Semaphore 2K26"
               />
 

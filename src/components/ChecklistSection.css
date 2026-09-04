@@ -909,6 +909,12 @@
   border-color: rgba(125,211,252,.18);
 }
 
+.priority-pill.priority-required {
+  color: #dff8ff;
+  background: #0b3043;
+  border-color: rgba(125,211,252,.22);
+}
+
 .priority-pill.priority-recommended {
   color: #fcd34d;
   background: rgba(251,191,36,.08);

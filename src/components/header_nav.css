@@ -1513,3 +1513,60 @@ and (max-height: 500px) {
     animation: none !important;
   }
 }
+
+/* Balanced brand sizing: keep the header compact and prioritize Semaphore. */
+.nitte-logo,
+.samca-logo {
+  height: clamp(31px, 3.3vw, 42px);
+  max-width: clamp(48px, 5.5vw, 70px);
+  padding: .12rem .22rem;
+}
+
+.semaphore-logo {
+  height: clamp(30px, 3.5vw, 43px);
+  max-width: clamp(112px, 11vw, 150px);
+  padding-left: .3rem;
+}
+
+.semaphore-logo::before { display: none; }
+.samca-logo + .brand-separator { opacity: .5; }
+
+@media (max-width: 900px) {
+  .nitte-logo,
+  .samca-logo { height: 34px; max-width: 51px; }
+  .semaphore-logo { height: 32px; max-width: min(130px, 29vw); padding-left: .2rem; }
+}
+
+@media (max-width: 520px) {
+  .nitte-logo,
+  .samca-logo { height: 29px; max-width: 44px; }
+  .semaphore-logo { height: 29px; max-width: min(116px, 32vw); }
+  .brand-separator { opacity: .45; }
+}
+
+@media (max-width: 380px) {
+  .nitte-logo,
+  .samca-logo,
+  .brand-separator { display: none; }
+  .semaphore-logo { height: 31px; max-width: 132px; padding-left: 0; }
+}
+
+/* Slightly roomier desktop navigation without affecting mobile. */
+@media (min-width: 901px) {
+  .site-header { min-height: 80px; }
+  .header-nav { min-height: 80px; }
+  .site-header.is-scrolled { min-height: 68px; }
+  .site-header.is-scrolled .header-nav { min-height: 68px; }
+
+  .header-nav { gap: clamp(1.15rem, 3vw, 3.75rem); }
+  .header-links { gap: clamp(.12rem, .45vw, .42rem); }
+  .header-links a {
+    min-height: 46px;
+    padding-inline: clamp(.5rem, .85vw, .92rem);
+    font-size: clamp(.76rem, .82vw, .9rem);
+  }
+
+  .helpdesk-nav-button { min-height: 46px; padding: .45rem .8rem; }
+  .helpdesk-copy small { font-size: .46rem; }
+  .helpdesk-copy strong { font-size: .73rem; }
+}

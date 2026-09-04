@@ -2,16 +2,16 @@ import { EventSection } from '../components/EventSection';
 import { eventsData } from '../data/eventsData';
 
 const eventLogos = {
-  'Code Wave': '/Events_LOGO/Events%20LOGO/codewave.png',
-  'Coral Canvas': '/Events_LOGO/Events%20LOGO/coral_canvas.png',
-  'Aqua Byte': '/Events_LOGO/Events%20LOGO/aquabyte.png',
-  'Abyss Arena': '/Events_LOGO/Events%20LOGO/abyss_arena.png',
-  AquaVerse: '/Events_LOGO/Events%20LOGO/aquaverse.png',
-  'Ocean Enigma': '/Events_LOGO/Events%20LOGO/ocean_enigma.png',
-  Leviathan: '/Events_LOGO/Events%20LOGO/leviathan.png',
-  'The Meg Pitch': '/Events_LOGO/Events%20LOGO/mega_pitch.png',
-  Submarine: '/Events_LOGO/Events%20LOGO/submarine.png',
-  Narcissa: '/Events_LOGO/Events%20LOGO/tide_tailor.png',
+  'Code Wave': '/Events_LOGO/codewave.png',
+  'Coral Canvas': '/Events_LOGO/coral_canvas.png',
+  'Aqua Byte': '/Events_LOGO/aquabyte.png',
+  'Abyss Arena': '/Events_LOGO/abyss_arena.png',
+  AquaVerse: '/Events_LOGO/aquaverse.png',
+  'Ocean Enigma': '/Events_LOGO/ocean_enigma.png',
+  Leviathan: '/Events_LOGO/leviathan.png',
+  'The Meg Pitch': '/Events_LOGO/mega_pitch.png',
+  Submarine: '/Events_LOGO/submarine.png',
+  Narcissa: '/Events_LOGO/tide_tailor.png',
 };
 
 function parseHead(head, role) {

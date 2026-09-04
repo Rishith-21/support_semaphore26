@@ -202,16 +202,16 @@ export function EventSection({ events = [], guidelines, globalSearch = '' }) {
                       }}
                     />
 
-                    {evt?.category && (
-                      <span className="event-category-pill">
-                        {evt.category}
-                      </span>
-                    )}
                   </div>
 
                   {/* Event Content */}
                   <div className="event-card-body">
                     <div className="event-card-info">
+                      {evt?.category && (
+                        <span className="event-category-pill">
+                          {evt.category}
+                        </span>
+                      )}
                       <h3 className="event-card-title">
                         {evt?.name || 'Untitled Event'}
                       </h3>
