@@ -13,6 +13,143 @@
   --transition-fast: 0.2s ease;
 }
 
+/* Dark portal continuity: Events, FAQ/Rules, and Campus Map */
+.section-wrapper,
+.campus-map-section,
+#faq-page-wrapper {
+  color: #d7edf4 !important;
+  background:
+    radial-gradient(circle at 12% 5%, rgba(14,165,233,.12), transparent 30rem),
+    radial-gradient(circle at 88% 85%, rgba(45,212,191,.08), transparent 28rem),
+    linear-gradient(145deg, #03131f, #061d2b 52%, #04151f) !important;
+}
+
+.section-wrapper::before {
+  opacity: .24;
+  background-image: radial-gradient(rgba(125,211,252,.35) 1px, transparent 1px);
+}
+
+.section-head h2,
+.campus-map-section h2,
+#faq-page-wrapper .faq-page-title { color: #f1fbff !important; }
+
+.events-page-head > p,
+.campus-map-section .section-description,
+#faq-page-wrapper .faq-page-subtitle { color: #91adbb !important; }
+
+.section-head .section-tag,
+.campus-map-section .section-tag {
+  color: #7dd3fc;
+  background: rgba(14,165,233,.10);
+  border-color: rgba(56,189,248,.22);
+}
+
+.event-guidelines-banner,
+.search-input-wrapper,
+.search-box,
+.event-card-simple,
+.facility-card,
+#faq-page-wrapper .faq-card,
+#faq-page-wrapper .rule-card,
+#faq-page-wrapper .empty-state {
+  color: #d7edf4 !important;
+  background: rgba(8,30,45,.82) !important;
+  border-color: rgba(125,211,252,.16) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+
+.event-guidelines-banner small,
+.event-card-description,
+.event-card-meta,
+.facility-card-desc,
+#faq-page-wrapper .faq-answer,
+#faq-page-wrapper .rule-item,
+#faq-page-wrapper .rule-item span { color: #91adbb !important; }
+
+.event-card-title,
+.facility-card-title,
+#faq-page-wrapper .faq-question,
+#faq-page-wrapper .rule-title,
+#faq-page-wrapper .rule-title span,
+#faq-page-wrapper h3,
+#faq-page-wrapper h4 { color: #eafaff !important; }
+
+.search-input-wrapper .search-input,
+.search-box .search-input,
+#faq-page-wrapper .faq-search-bar input {
+  color: #eafaff !important;
+  background: transparent !important;
+}
+
+.event-card-simple:hover,
+.event-card-simple:focus-visible,
+.facility-card:hover,
+.facility-card.is-highlighted {
+  border-color: rgba(56,189,248,.38) !important;
+  box-shadow: 0 16px 38px rgba(0,0,0,.24), 0 0 22px rgba(56,189,248,.08);
+}
+
+.event-modal-body { color: #d7edf4; background: #071e2c; }
+.event-modal-fact, .event-rules-list li, .event-coordinator-card { color: #91adbb; background: #0a293a; border-color: rgba(125,211,252,.14); }
+.event-modal-fact strong, .event-modal-section-heading h3, .event-coordinator-copy strong { color: #eafaff; }
+.event-contact-button { color: #bae6f2; background: #0a293a; border-color: rgba(125,211,252,.2); }
+
+.filter-pill,
+.facility-locate-btn,
+.facility-category-tag {
+  color: #9ab6c3;
+  background: rgba(8,30,45,.82);
+  border-color: rgba(125,211,252,.16);
+}
+
+.map-container-interactive {
+  background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.10), transparent 24rem), linear-gradient(145deg, #092536, #0a3040);
+  border-color: rgba(125,211,252,.18);
+}
+.map-abstract-path { background: rgba(125,211,252,.13); }
+.map-pin-tooltip { color: #eafaff; background: rgba(5,25,38,.95); border-color: rgba(125,211,252,.2); }
+
+/* Dialogs render at document level, above the sticky navigation. */
+.modal-backdrop {
+  z-index: 2000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-content.event-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, calc(100vw - 2rem));
+  max-height: min(880px, calc(100dvh - 2rem));
+  overflow: hidden;
+}
+
+.event-modal-hero { flex: 0 0 auto; }
+.event-modal-body { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
+
+@media (max-width: 540px) {
+  .modal-backdrop { align-items: end; padding: .5rem; }
+  .modal-content.event-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 1rem; }
+  .event-modal-body { max-height: none; }
+}
+
+#faq-page-wrapper .faq-search-bar,
+#faq-page-wrapper .section-toggle,
+#faq-page-wrapper .suggestions-dropdown {
+  background: rgba(8,30,45,.86) !important;
+  border-color: rgba(125,211,252,.16) !important;
+}
+
+#faq-page-wrapper [style*="borderBottom: '2px solid"] { border-bottom-color: rgba(125,211,252,.14) !important; }
+#faq-page-wrapper [style*="linear-gradient(90deg, #EEF2FF"],
+#faq-page-wrapper [style*="linear-gradient(90deg, #F0FDF4"] { background: rgba(14,165,233,.07) !important; }
+#faq-page-wrapper .rule-title[style] { background: rgba(14,165,233,.06) !important; }
+
+@media print {
+  .section-wrapper, .campus-map-section, #faq-page-wrapper,
+  .event-modal-body { color: #1e293b !important; background: #fff !important; }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -1389,3 +1526,39 @@ input:focus-visible,
     scroll-behavior: auto;
   }
 }
+
+/* Final dialog sizing overrides kept after legacy modal rules. */
+.event-card-img-wrap { background: #061a27; }
+.event-card-img { object-fit: contain; padding: .45rem; }
+.event-card-simple:hover .event-card-img { transform: scale(1.025); }
+.event-modal-image { object-fit: contain; padding: 1rem; background: #061a27; }
+.event-modal-shade { background: linear-gradient(180deg, transparent 30%, rgba(3,20,32,.94)); }
+
+.modal-backdrop { z-index: 2000; overflow-y: auto; overscroll-behavior: contain; }
+.modal-content.event-modal { display: flex; flex-direction: column; width: min(760px, calc(100vw - 2rem)); max-height: min(880px, calc(100dvh - 2rem)); overflow: hidden; }
+.event-modal-hero { flex: 0 0 auto; }
+.event-modal-body { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
+
+@media (max-width: 540px) {
+  .modal-backdrop { align-items: end; padding: .5rem; }
+  .modal-content.event-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 1rem; }
+  .event-modal-body { max-height: none; }
+}
+
+/* Final dark-theme overrides kept last so legacy light rules cannot win. */
+.section-head .section-tag,
+.campus-map-section .section-tag { color: #7dd3fc; background: rgba(14,165,233,.10); border-color: rgba(56,189,248,.22); }
+.event-modal-body { color: #d7edf4; background: #071e2c; }
+.event-modal-fact,
+.event-rules-list li,
+.event-coordinator-card { color: #91adbb; background: #0a293a; border-color: rgba(125,211,252,.14); }
+.event-modal-fact strong,
+.event-modal-section-heading h3,
+.event-coordinator-copy strong { color: #eafaff; }
+.event-contact-button { color: #bae6f2; background: #0a293a; border-color: rgba(125,211,252,.2); }
+.filter-pill,
+.facility-locate-btn,
+.facility-category-tag { color: #9ab6c3; background: rgba(8,30,45,.82); border-color: rgba(125,211,252,.16); }
+.map-container-interactive { background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.10), transparent 24rem), linear-gradient(145deg, #092536, #0a3040); border-color: rgba(125,211,252,.18); }
+.map-abstract-path { background: rgba(125,211,252,.13); }
+.map-pin-tooltip { color: #eafaff; background: rgba(5,25,38,.95); border-color: rgba(125,211,252,.2); }

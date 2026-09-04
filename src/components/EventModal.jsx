@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { IconX, IconUser, IconPhone, IconWhatsApp, IconCheck } from './Icons';
 
 function CoordinatorCard({ coordinator }) {
@@ -50,7 +51,7 @@ export function EventModal({ event, onClose }) {
 
   if (!event) return null;
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" onMouseDown={onClose}>
       <div className="modal-content event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title" onMouseDown={(e) => e.stopPropagation()}>
         <header className="event-modal-hero">
@@ -98,6 +99,7 @@ export function EventModal({ event, onClose }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

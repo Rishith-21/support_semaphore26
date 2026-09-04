@@ -3,11 +3,6 @@ import './ChecklistSection.css';
 import { generalChecklist, eventChecklists } from '../data/checklistData';
 import {
   IconCheck,
-  IconCheckSquare,
-  IconSquare,
-  IconPrinter,
-  IconRotateCcw,
-  IconCopy,
   IconSearch,
   IconShield,
   IconTicket,
@@ -26,6 +21,7 @@ import {
 
 export function ChecklistSection({ globalSearch = '' }) {
   const STORAGE_KEY = 'semaphore_checklist_v1';
+  const EVENTS_STORAGE_KEY = 'semaphore_my_events_v1';
 
   const [checkedItems, setCheckedItems] = useState(() => {
     try {
@@ -36,20 +32,41 @@ export function ChecklistSection({ globalSearch = '' }) {
 
   const [searchQuery, setSearchQuery] = useState(globalSearch);
   const [selectedEventFilter, setSelectedEventFilter] = useState('all');
-  const [copiedToast, setCopiedToast] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [selectedEventIds, setSelectedEventIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem(EVENTS_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
 
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedItems)); }
     catch { /* localStorage may be unavailable */ }
   }, [checkedItems]);
 
+  useEffect(() => {
+    try { localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(selectedEventIds)); }
+    catch { /* localStorage may be unavailable */ }
+  }, [selectedEventIds]);
+
+  const toggleEvent = (eventId) => {
+    setSelectedEventIds((prev) => prev.includes(eventId)
+      ? prev.filter((id) => id !== eventId)
+      : [...prev, eventId]);
+    if (selectedEventFilter === eventId) setSelectedEventFilter('all');
+  };
+
   const toggleItem = (id) =>
     setCheckedItems((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
   /* ── STATS ── */
   const allGeneralItems = useMemo(() => generalChecklist.flatMap((c) => c.items), []);
-  const allEventItems = useMemo(() => eventChecklists.flatMap((e) => e.items), []);
+  const selectedEvents = useMemo(
+    () => eventChecklists.filter((event) => selectedEventIds.includes(event.eventId)),
+    [selectedEventIds],
+  );
+  const allEventItems = useMemo(() => selectedEvents.flatMap((e) => e.items), [selectedEvents]);
   const allItems = useMemo(() => [...allGeneralItems, ...allEventItems], [allGeneralItems, allEventItems]);
   const completedCount = allItems.filter((i) => checkedItems.includes(i.id)).length;
   const totalItemsCount = allItems.length;
@@ -68,46 +85,14 @@ export function ChecklistSection({ globalSearch = '' }) {
   const filteredEvents = useMemo(() => {
     if (activeTab === 'general') return [];
     const q = searchQuery.trim().toLowerCase();
-    return eventChecklists
+    return selectedEvents
       .filter((e) => selectedEventFilter === 'all' || e.eventId === selectedEventFilter)
       .map((evt) => ({
         ...evt,
         items: evt.items.filter((i) => !q || [i.title, i.description, i.priority, i.tip || '', evt.eventName, evt.venue].some((s) => s.toLowerCase().includes(q))),
       }))
       .filter((e) => e.items.length > 0);
-  }, [searchQuery, selectedEventFilter, activeTab]);
-
-  const visibleIds = useMemo(() => [
-    ...filteredGeneral.flatMap((c) => c.items.map((i) => i.id)),
-    ...filteredEvents.flatMap((e) => e.items.map((i) => i.id)),
-  ], [filteredGeneral, filteredEvents]);
-
-  const areAllChecked = visibleIds.length > 0 && visibleIds.every((id) => checkedItems.includes(id));
-
-  const handleToggleAll = () => {
-    if (areAllChecked) setCheckedItems((prev) => prev.filter((id) => !visibleIds.includes(id)));
-    else setCheckedItems((prev) => Array.from(new Set([...prev, ...visibleIds])));
-  };
-
-  const handleReset = () => {
-    if (window.confirm('Reset all checked items?')) setCheckedItems([]);
-  };
-
-  const handleCopy = () => {
-    let t = `📋 SEMAPHORE 2K26 — PARTICIPANT CHECKLIST\n`;
-    t += `Readiness: ${completedCount}/${totalItemsCount} (${progressPct}%)\n\n`;
-    t += `=== 1. GENERAL ===\n`;
-    generalChecklist.forEach((c) => {
-      t += `\n[${c.categoryTitle}]\n`;
-      c.items.forEach((i) => { t += `${checkedItems.includes(i.id) ? '[✓]' : '[ ]'} ${i.title} (${i.priority.toUpperCase()})\n`; });
-    });
-    t += `\n=== 2. EVENT-WISE ===\n`;
-    eventChecklists.forEach((e) => {
-      t += `\n[${e.eventName}]\n`;
-      e.items.forEach((i) => { t += `${checkedItems.includes(i.id) ? '[✓]' : '[ ]'} ${i.title} (${i.priority.toUpperCase()})\n`; });
-    });
-    navigator.clipboard.writeText(t).then(() => { setCopiedToast(true); setTimeout(() => setCopiedToast(false), 2500); });
-  };
+  }, [searchQuery, selectedEventFilter, activeTab, selectedEvents]);
 
   const getCategoryIcon = (name) => {
     switch (name) {
@@ -164,6 +149,29 @@ export function ChecklistSection({ globalSearch = '' }) {
             </p>
           </div>
 
+          <div className="my-events-panel" aria-labelledby="my-events-title">
+            <div className="my-events-heading">
+              <div>
+                <span className="my-events-step">Personalize your checklist</span>
+                <h2 id="my-events-title">Which events are you attending?</h2>
+                <p>Select your registered events so readiness only counts what applies to you.</p>
+              </div>
+              <span className="my-events-count">{selectedEventIds.length} selected</span>
+            </div>
+            <div className="my-events-grid">
+              {eventChecklists.map((event) => {
+                const selected = selectedEventIds.includes(event.eventId);
+                return (
+                  <button type="button" key={event.eventId} className={`my-event-option${selected ? ' selected' : ''}`} aria-pressed={selected} onClick={() => toggleEvent(event.eventId)}>
+                    <span className="my-event-check" aria-hidden="true">{selected ? <IconCheck size={14} /> : null}</span>
+                    <span><strong>{event.eventName}</strong><small>{event.eventCode} · {event.category}</small></span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedEventIds.length === 0 && <p className="my-events-hint">Your general checklist is ready. Select at least one event to add its requirements.</p>}
+          </div>
+
           {/* ── PROGRESS METER ── */}
           <div className="checklist-progress-card">
             <div className="progress-card-top">
@@ -171,7 +179,7 @@ export function ChecklistSection({ globalSearch = '' }) {
                 <span className="progress-percentage-pill">{progressPct}% Ready</span>
                 <span className="progress-counter-text"><strong>{completedCount}</strong> of <strong>{totalItemsCount}</strong> items checked</span>
               </div>
-              {progressPct === 100 && (
+              {progressPct === 100 && selectedEventIds.length > 0 && (
                 <span className="all-ready-badge"><IconCheck size={15} /> All Set for Semaphore 2K26!</span>
               )}
             </div>
@@ -180,25 +188,6 @@ export function ChecklistSection({ globalSearch = '' }) {
               <div className="progress-bar-fill" style={{ width: `${progressPct}%` }}></div>
             </div>
 
-            <div className="checklist-quick-actions-bar">
-              <div className="actions-left">
-                <button onClick={handleToggleAll} className="btn btn-secondary btn-sm">
-                  {areAllChecked ? <IconSquare size={15} /> : <IconCheckSquare size={15} />}
-                  <span>{areAllChecked ? 'Uncheck Visible' : 'Check All Visible'}</span>
-                </button>
-                <button onClick={handleReset} className="btn btn-secondary btn-sm btn-reset">
-                  <IconRotateCcw size={14} /><span>Reset</span>
-                </button>
-              </div>
-              <div className="actions-right">
-                <button onClick={handleCopy} className="btn btn-secondary btn-sm">
-                  <IconCopy size={14} /><span>{copiedToast ? 'Copied!' : 'Copy Text'}</span>
-                </button>
-                <button onClick={() => window.print()} className="btn btn-primary btn-sm">
-                  <IconPrinter size={14} /><span>Print Checklist</span>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -208,7 +197,7 @@ export function ChecklistSection({ globalSearch = '' }) {
             {[
               { id: 'all', label: `All Items (${allItems.length})` },
               { id: 'general', label: `1. General First (${allGeneralItems.length})` },
-              { id: 'event-wise', label: `2. Event-Wise (${allEventItems.length})` },
+              { id: 'event-wise', label: `2. My Events (${allEventItems.length})` },
             ].map((tab) => (
               <button key={tab.id} className={`checklist-tab-btn${activeTab === tab.id ? ' active' : ''}`} onClick={() => setActiveTab(tab.id)}>
                 {tab.label}
@@ -233,8 +222,8 @@ export function ChecklistSection({ globalSearch = '' }) {
               <div className="checklist-event-selector">
                 <IconFilter size={15} className="selector-icon" />
                 <select value={selectedEventFilter} onChange={(e) => setSelectedEventFilter(e.target.value)} className="checklist-event-select">
-                  <option value="all">All Events ({eventChecklists.length})</option>
-                  {eventChecklists.map((e) => (
+                  <option value="all">My Events ({selectedEvents.length})</option>
+                  {selectedEvents.map((e) => (
                     <option key={e.eventId} value={e.eventId}>{e.eventName} ({e.eventCode})</option>
                   ))}
                 </select>
@@ -279,6 +268,15 @@ export function ChecklistSection({ globalSearch = '' }) {
         )}
 
         {/* ── SECTION 2: EVENT-WISE (SECOND) ── */}
+        {activeTab !== 'general' && selectedEvents.length === 0 && !searchQuery && (
+          <div className="select-events-empty">
+            <IconTicket size={30} />
+            <h3>Add your registered events</h3>
+            <p>Choose events above to see the equipment, preparation, and reporting requirements relevant to you.</p>
+            <button type="button" className="btn btn-primary" onClick={() => document.getElementById('my-events-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Choose My Events</button>
+          </div>
+        )}
+
         {activeTab !== 'general' && filteredEvents.length > 0 && (
           <div className="checklist-section-block" id="event-wise-checklist-block">
             <div className="section-block-header">
@@ -361,7 +359,7 @@ export function ChecklistSection({ globalSearch = '' }) {
         )}
 
         {/* ── EMPTY STATE ── */}
-        {filteredGeneral.length === 0 && filteredEvents.length === 0 && (
+        {filteredGeneral.length === 0 && filteredEvents.length === 0 && (selectedEvents.length > 0 || Boolean(searchQuery)) && (
           <div className="checklist-empty-state">
             <IconSearch size={40} className="empty-icon" />
             <h3>No matching checklist items found</h3>

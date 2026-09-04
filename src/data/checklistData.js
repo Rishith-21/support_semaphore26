@@ -106,9 +106,9 @@ export const generalChecklist = [
 
 export const eventChecklists = [
   {
-    eventId: "surprise-event",
+    eventId: "Ocean Enigma",
     eventCode: "SE",
-    eventName: "Surprise Event",
+    eventName: "Ocean Enigma",
     category: "Fun & Entertainment",
     venue: "Event Venue",
     time: "As per event schedule",
@@ -150,9 +150,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "dance",
-    eventCode: "DANCE",
-    eventName: "Dance",
+    eventId: "Narcissa",
+    eventCode: "FASHION",
+    eventName: "Narcissa",
     category: "Cultural",
     venue: "Main Auditorium",
     time: "As per event schedule",
@@ -163,47 +163,47 @@ export const eventChecklists = [
     items: [
       {
         id: "dance-registration",
-        title: "Complete dance event registration",
+        title: "Complete fashion show registration",
         description:
-          "Ensure your team or individual registration is completed.",
+          "Ensure both team members are included in the registration.",
         priority: "required",
       },
       {
         id: "dance-track",
-        title: "Prepare performance track",
+        title: "Prepare your ramp-walk track",
         description:
-          "Keep your final performance audio ready in the required format.",
+          "Keep your selected ramp-walk music ready in the required format.",
         priority: "required",
         tip: "Keep a backup copy of the audio on another device.",
       },
       {
         id: "dance-costume",
-        title: "Prepare costume and accessories",
+        title: "Prepare professional outfits",
         description:
-          "Bring all required costumes, footwear, and performance accessories.",
+          "Bring coordinated corporate or professional outfits, footwear, and accessories.",
         priority: "required",
       },
       {
         id: "dance-props",
-        title: "Check performance props",
+        title: "Check outfit coordination",
         description:
-          "Ensure all approved props are ready before reporting.",
+          "Confirm that both team members share a coordinated styling concept.",
         priority: "recommended",
       },
       {
         id: "dance-warmup",
-        title: "Arrive early for warm-up",
+        title: "Arrive early for preparation",
         description:
-          "Allow sufficient time for changing and warming up before your performance.",
+          "Allow sufficient time for changing, styling, and reporting before the ramp walk.",
         priority: "recommended",
       },
     ],
   },
 
   {
-    eventId: "startup",
+    eventId: "The Meg Pitch",
     eventCode: "STARTUP",
-    eventName: "Startup",
+    eventName: "The Meg Pitch",
     category: "Entrepreneurship",
     venue: "Seminar Hall",
     time: "As per event schedule",
@@ -251,9 +251,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "tech-talk",
+    eventId: "AquaVerse",
     eventCode: "TECH",
-    eventName: "Tech Talk",
+    eventName: "AquaVerse",
     category: "Technical",
     venue: "Seminar Hall",
     time: "As per event schedule",
@@ -294,9 +294,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "gaming",
+    eventId: "Abyss Arena",
     eventCode: "GAME",
-    eventName: "Gaming",
+    eventName: "Abyss Arena",
     category: "Gaming",
     venue: "Gaming Arena",
     time: "As per event schedule",
@@ -344,9 +344,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "it-quiz",
+    eventId: "Aqua Byte",
     eventCode: "ITQUIZ",
-    eventName: "IT Quiz",
+    eventName: "Aqua Byte",
     category: "Quiz",
     venue: "Quiz Hall",
     time: "As per event schedule",
@@ -394,9 +394,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "photography",
+    eventId: "Submarine",
     eventCode: "PHOTO",
-    eventName: "Photography",
+    eventName: "Submarine",
     category: "Creative",
     venue: "Photography Zone",
     time: "As per event schedule",
@@ -444,9 +444,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "coding",
+    eventId: "Code Wave",
     eventCode: "CODE",
-    eventName: "Coding",
+    eventName: "Code Wave",
     category: "Technical",
     venue: "Computer Lab",
     time: "As per event schedule",
@@ -502,9 +502,9 @@ export const eventChecklists = [
   },
 
   {
-    eventId: "web-design",
+    eventId: "Coral Canvas",
     eventCode: "WEBDESIGN",
-    eventName: "Web Design",
+    eventName: "Coral Canvas",
     category: "Technical & Creative",
     venue: "Computer Lab",
     time: "As per event schedule",
@@ -562,6 +562,23 @@ export const eventChecklists = [
           "Verify that HTML, CSS, JavaScript, and any permitted frameworks or tools are ready.",
         priority: "recommended",
       },
+    ],
+  },
+  {
+    eventId: "Leviathan",
+    eventCode: "MANAGER",
+    eventName: "Leviathan",
+    category: "IT Manager",
+    venue: "Event Venue",
+    time: "As per event schedule",
+    headName: "IT Manager Coordinator",
+    headPhone: "+919845500911",
+    whatsapp: "919845500911",
+    items: [
+      { id: "manager-registration", title: "Complete event registration", description: "Confirm your individual registration for Leviathan.", priority: "required" },
+      { id: "manager-laptop", title: "Bring your laptop and charger", description: "Carry a working laptop and its power adapter for all applicable rounds.", priority: "required" },
+      { id: "manager-reporting", title: "Check every reporting time", description: "Be available and report on time for every round of the event.", priority: "required" },
+      { id: "manager-rules", title: "Review participation restrictions", description: "Leviathan participants cannot join another event and must compete individually.", priority: "required" },
     ],
   },
 ];
