@@ -13,10 +13,6 @@ import { ruleCategories } from '../data/rulesData';
 export function FaqSection({ faqData, categories, globalSearch }) {
   const [activeTab, setActiveTab] = useState('faq'); // 'faq' or 'rules'
 
-  // Rules API states
-  const [apiRules, setApiRules] = useState([]);
-  const [loadingRules, setLoadingRules] = useState(true);
-
   // FAQ states
   const [selectedCat, setSelectedCat] = useState('All FAQs');
   const [localSearch, setLocalSearch] = useState('');
@@ -27,27 +23,8 @@ export function FaqSection({ faqData, categories, globalSearch }) {
   const [openItems, setOpenItems] = useState({
     'cat-Registration & Entry': true,
     'faq-01': true,
-    'rule-general-api': true,
     'rule-reporting': true
   });
-
-  // Fetch general rules from API
-  useEffect(() => {
-    const fetchApiRules = async () => {
-      try {
-        const response = await fetch('/api/general-rules.json');
-        if (response.ok) {
-          const data = await response.json();
-          setApiRules(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch general rules", error);
-      } finally {
-        setLoadingRules(false);
-      }
-    };
-    fetchApiRules();
-  }, []);
 
   // Debounce search input to make filtering efficient
   useEffect(() => {
@@ -111,19 +88,10 @@ export function FaqSection({ faqData, categories, globalSearch }) {
       }))
     );
 
-    const matchedApiRules = apiRules.flatMap(cat =>
-      cat.rules.filter(r => r.toLowerCase().includes(term)).map(r => ({
-        id: `s-rule-api-${cat.id}-${Math.random()}`,
-        type: 'RULE',
-        text: r,
-        targetIds: [`rule-${cat.id}`]
-      }))
-    );
-
-    const matchedRules = [...matchedApiRules, ...matchedHardcodedRules].slice(0, 3);
+    const matchedRules = matchedHardcodedRules.slice(0, 3);
 
     return [...matchedFaqs, ...matchedRules];
-  }, [localSearch, apiRules, faqData]);
+  }, [localSearch, faqData]);
 
   // Filter FAQs
   const filteredFaqs = useMemo(() => {
@@ -146,18 +114,6 @@ export function FaqSection({ faqData, categories, globalSearch }) {
       )
     })).filter(cat => cat.rules.length > 0);
   }, [normalizedSearch]);
-
-  // Filter API Rules
-  const filteredApiRules = useMemo(() => {
-    if (!normalizedSearch) return apiRules;
-    return apiRules.map(cat => ({
-      ...cat,
-      rules: cat.rules.filter(r =>
-        r.toLowerCase().includes(normalizedSearch) ||
-        cat.title.toLowerCase().includes(normalizedSearch)
-      )
-    })).filter(cat => cat.rules.length > 0);
-  }, [normalizedSearch, apiRules]);
 
   return (
     <section id="faq-page-wrapper">
@@ -874,7 +830,7 @@ export function FaqSection({ faqData, categories, globalSearch }) {
         {/* Rules Section */}
         {activeTab === 'rules' && (
           <div>
-            {filteredApiRules.length === 0 && filteredRules.length === 0 ? (
+            {filteredRules.length === 0 ? (
               <div className="empty-state">
                 <IconAlertTriangle size={40} style={{ marginBottom: '1rem', color: '#D97706', display: 'inline-block' }} />
                 <h3>No matching rules found</h3>
@@ -882,65 +838,7 @@ export function FaqSection({ faqData, categories, globalSearch }) {
               </div>
             ) : (
               <>
-                {/* General Rules (API) */}
-                {filteredApiRules.length > 0 && (
-                  <div style={{ marginBottom: '3rem' }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', marginBottom: '1.5rem',
-                      background: 'linear-gradient(90deg, #EEF2FF 0%, transparent 100%)',
-                      padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #4F46E5'
-                    }}>
-                      <IconShield size={28} style={{ marginRight: '0.75rem', color: '#4F46E5' }} />
-                      <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                        General Rules (Live Policy)
-                      </h3>
-                    </div>
-
-                    {loadingRules ? (
-                      <div style={{ textAlign: 'center', padding: '2rem', color: '#64748B' }}>
-                        Fetching latest policies...
-                      </div>
-                    ) : (
-                      <div className="rules-list" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                        {filteredApiRules.map(category => {
-                          const isOpen = openItems[`rule-${category.id}`] || !!normalizedSearch;
-                          return (
-                            <div key={category.id} className="rule-card" style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-                              <button
-                                className="rule-title"
-                                onClick={() => toggleItem(`rule-${category.id}`)}
-                                style={{
-                                  width: '100%', background: '#F1F5F9', border: 'none', padding: '1.25rem',
-                                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                  cursor: 'pointer', textAlign: 'left', margin: 0
-                                }}
-                              >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                  <IconShield size={24} style={{ color: '#3B82F6', flexShrink: 0 }} />
-                                  <span style={{ fontWeight: 700, color: '#0F172A', fontSize: '1.1rem' }}>{category.title}</span>
-                                </div>
-                                {isOpen ? <IconChevronUp size={20} style={{ flexShrink: 0, color: '#475569' }} /> : <IconChevronDown size={20} style={{ flexShrink: 0, color: '#475569' }} />}
-                              </button>
-
-                              {isOpen && (
-                                <ul className="rule-list" style={{ marginTop: '0', padding: '1.25rem' }}>
-                                  {category.rules.map((rule, idx) => (
-                                    <li key={idx} className="rule-item" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '0.5rem' }}>
-                                      <IconCheck size={18} style={{ color: '#10B981', flexShrink: 0, marginTop: '2px' }} />
-                                      <span style={{ color: '#475569', lineHeight: 1.5, fontSize: '0.95rem' }}>{rule}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Event Rules (Hardcoded) */}
+                {/* Event rules from local bundled data */}
                 {filteredRules.length > 0 && (
                   <div>
                     <div style={{

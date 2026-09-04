@@ -1,14 +1,16 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   MapPin,
   ClipboardCheck,
   BadgeCheck,
   Rocket,
   Map,
-  Calendar,
 } from "lucide-react";
 import "./ArrivalCheckin.css";
+
+const MotionLink = motion.create(Link);
 
 const steps = [
   {
@@ -179,8 +181,8 @@ export default function ArrivalCheckin() {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          <motion.a
-            href="#venue"
+          <MotionLink
+            to="/campus"
             className="ac-btn ac-btn-primary"
             variants={btnVariants}
             custom={0}
@@ -189,18 +191,7 @@ export default function ArrivalCheckin() {
           >
             <Map size={18} />
             View Venue
-          </motion.a>
-          <motion.a
-            href="#schedule"
-            className="ac-btn ac-btn-outline"
-            variants={btnVariants}
-            custom={1}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Calendar size={18} />
-            View Schedule
-          </motion.a>
+          </MotionLink>
         </motion.div>
       </div>
     </section>

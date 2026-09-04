@@ -9,6 +9,7 @@ const navigationItems = [
   { label: 'Home', to: '/', end: true },
   { label: 'Events', to: '/events' },
   { label: 'Arrival Guide', to: '/arrival' },
+  { label: 'Campus Map', to: '/campus' },
   { label: 'Checklist', to: '/checklist' },
   { label: 'FAQ & Rules', to: '/faq' },
 ];
@@ -228,23 +229,6 @@ function HeaderNav() {
                   />
                 </NavLink>
               ))}
-
-
-              {/* Mobile campus link */}
-
-              <NavLink
-                className="campus-mobile-link"
-                to="/campus"
-                onClick={closeMenu}
-              >
-                <span className="nav-number">
-                  06
-                </span>
-
-                <span className="nav-label">
-                  Campus Map
-                </span>
-              </NavLink>
 
             </div>
 

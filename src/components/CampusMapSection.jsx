@@ -9,6 +9,7 @@ import {
 import L from 'leaflet'
 
 import { IconMapPin, IconSearch, IconMap } from './Icons'
+import './CampusMapSection.css'
 
 /* =========================================================
    NMAMIT CAMPUS CENTER
@@ -111,19 +112,6 @@ export function CampusMapSection({
   /* =======================================================
      SELECT FACILITY
   ======================================================= */
-
-  const selectFacility = (id) => {
-    setActiveFacility(id)
-
-    setTimeout(() => {
-      document
-        .getElementById(`facility-${id}`)
-        ?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        })
-    }, 50)
-  }
 
   /* =======================================================
      SHOW / HIDE PIN

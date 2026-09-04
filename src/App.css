@@ -1599,14 +1599,24 @@ input:focus-visible,
 }
 
 /* Final dialog sizing overrides kept after legacy modal rules. */
+@keyframes event-modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes event-modal-content-in {
+  from { opacity: 0; transform: translateY(12px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .event-card-img-wrap { background: #061a27; }
 .event-card-img { object-fit: contain; padding: .45rem; }
 .event-card-simple:hover .event-card-img { transform: scale(1.025); }
 .event-modal-image { object-fit: contain; padding: 1rem; background: #061a27; }
 .event-modal-shade { background: linear-gradient(180deg, transparent 30%, rgba(3,20,32,.94)); }
 
-.modal-backdrop { z-index: 2000; overflow-y: auto; overscroll-behavior: contain; }
-.modal-content.event-modal { display: flex; flex-direction: column; width: min(760px, calc(100vw - 2rem)); max-height: min(880px, calc(100dvh - 2rem)); overflow: hidden; }
+.modal-backdrop { z-index: 2000; overflow-y: auto; overscroll-behavior: contain; animation: event-modal-backdrop-in 180ms ease-out both; }
+.modal-content.event-modal { display: flex; flex-direction: column; width: min(760px, calc(100vw - 2rem)); max-height: min(880px, calc(100dvh - 2rem)); overflow: hidden; animation: event-modal-content-in 240ms cubic-bezier(.2,.75,.25,1) both; transform-origin: center; }
 .event-modal-hero { flex: 0 0 auto; }
 .event-modal-body { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
 
@@ -1614,6 +1624,11 @@ input:focus-visible,
   .modal-backdrop { align-items: end; padding: .5rem; }
   .modal-content.event-modal { width: 100%; max-height: calc(100dvh - 1rem); border-radius: 1rem; }
   .event-modal-body { max-height: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-content.event-modal { animation: none; }
 }
 
 /* Final dark-theme overrides kept last so legacy light rules cannot win. */
