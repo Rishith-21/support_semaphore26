@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
 import { EventModal } from './EventModal';
 
 import {
@@ -6,127 +7,133 @@ import {
   IconCalendar,
   IconMapPin,
   IconSearch,
-  IconUser
+  IconUser,
 } from './Icons';
 
 
-// ------------------------------------
-// Calculate event status and countdown
-// ------------------------------------
+// =========================================================
+// EVENT STATUS
+// =========================================================
+
 function getEventStatus(item, now) {
   const date = item.date;
 
-  // Extract start and end time
-  const timeParts = item.time.match(
+  const timeParts = item.time?.match(
     /(\d{1,2}:\d{2}\s*[AP]M)(?:\s*-\s*(\d{1,2}:\d{2}\s*[AP]M))?/i
   );
 
-  // If time cannot be understood
   if (!timeParts) {
     return {
       status: 'Upcoming',
-      text: 'Upcoming'
+      text: 'Upcoming',
     };
   }
 
   const startTime = timeParts[1];
   let endTime = timeParts[2];
 
-  // ------------------------------------
-  // 24-hour event
-  // ------------------------------------
+  // -------------------------------------------------------
+  // 24 HOUR EVENT
+  // -------------------------------------------------------
+
   if (item.time.toLowerCase().includes('ongoing 24h')) {
     const start = new Date(`${date} ${startTime}`);
-    const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+    const end = new Date(
+      start.getTime() + 24 * 60 * 60 * 1000
+    );
 
     if (now < start) {
       return {
         status: 'Upcoming',
-        text: `Starts in ${formatCountdown(start - now)}`
+        text: `Starts in ${formatCountdown(start - now)}`,
       };
     }
 
     if (now < end) {
       return {
         status: 'Live Now',
-        text: 'LIVE NOW'
+        text: 'LIVE NOW',
       };
     }
 
     return {
       status: 'Completed',
-      text: 'COMPLETED'
+      text: 'COMPLETED',
     };
   }
 
-  // ------------------------------------
-  // Event with only a start time
-  // Assume 1 hour duration
-  // ------------------------------------
+  // -------------------------------------------------------
+  // EVENT WITHOUT END TIME
+  // Assume one hour duration
+  // -------------------------------------------------------
+
   if (!endTime) {
     const start = new Date(`${date} ${startTime}`);
-    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const end = new Date(
+      start.getTime() + 60 * 60 * 1000
+    );
 
     if (now < start) {
       return {
         status: 'Upcoming',
-        text: `Starts in ${formatCountdown(start - now)}`
+        text: `Starts in ${formatCountdown(start - now)}`,
       };
     }
 
     if (now < end) {
       return {
         status: 'Live Now',
-        text: 'LIVE NOW'
+        text: 'LIVE NOW',
       };
     }
 
     return {
       status: 'Completed',
-      text: 'COMPLETED'
+      text: 'COMPLETED',
     };
   }
 
-  // ------------------------------------
-  // Normal event with start and end time
-  // ------------------------------------
+  // -------------------------------------------------------
+  // NORMAL EVENT
+  // -------------------------------------------------------
+
   const start = new Date(`${date} ${startTime}`);
   const end = new Date(`${date} ${endTime}`);
 
-  // Before event
   if (now < start) {
     return {
       status: 'Upcoming',
-      text: `Starts in ${formatCountdown(start - now)}`
+      text: `Starts in ${formatCountdown(start - now)}`,
     };
   }
 
-  // Event currently happening
   if (now < end) {
     return {
       status: 'Live Now',
-      text: 'LIVE NOW'
+      text: 'LIVE NOW',
     };
   }
 
-  // Event finished
   return {
     status: 'Completed',
-    text: 'COMPLETED'
+    text: 'COMPLETED',
   };
 }
 
 
-// ------------------------------------
-// Format countdown
-// ------------------------------------
+// =========================================================
+// COUNTDOWN
+// =========================================================
+
 function formatCountdown(milliseconds) {
   const totalSeconds = Math.max(
     0,
     Math.floor(milliseconds / 1000)
   );
 
-  const days = Math.floor(totalSeconds / 86400);
+  const days = Math.floor(
+    totalSeconds / 86400
+  );
 
   const hours = Math.floor(
     (totalSeconds % 86400) / 3600
@@ -138,61 +145,114 @@ function formatCountdown(milliseconds) {
 
   const seconds = totalSeconds % 60;
 
-  // If more than one day
   if (days > 0) {
     return `${days}d ${hours}h ${minutes}m`;
   }
 
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return [
+    String(hours).padStart(2, '0'),
+    String(minutes).padStart(2, '0'),
+    String(seconds).padStart(2, '0'),
+  ].join(':');
 }
 
 
-// ------------------------------------
-// Schedule / Events Section
-// ------------------------------------
+// =========================================================
+// STATUS CLASS
+// =========================================================
+
+function getStatusClass(status) {
+  switch (status) {
+    case 'Live Now':
+      return 'badge-live';
+
+    case 'Completed':
+      return 'badge-completed';
+
+    default:
+      return 'badge-upcoming';
+  }
+}
+
+
+// =========================================================
+// SCHEDULE SECTION
+// =========================================================
+
 export function ScheduleSection({
-  scheduleData,
-  scheduleDays,
-  scheduleVenues,
-  globalSearch
+  scheduleData = [],
+  scheduleDays = [],
+  scheduleVenues = [],
+  globalSearch = '',
 }) {
+  const [selectedDay, setSelectedDay] =
+    useState('day1');
 
-  const [selectedDay, setSelectedDay] = useState('day1');
+  const [selectedVenue, setSelectedVenue] =
+    useState('All Venues');
 
-  const [selectedVenue, setSelectedVenue] = useState('All Venues');
+  const [selectedCategory, setSelectedCategory] =
+    useState('All Categories');
 
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [localSearch, setLocalSearch] =
+    useState('');
 
-  const [localSearch, setLocalSearch] = useState('');
+  const [selectedEvent, setSelectedEvent] =
+    useState(null);
 
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  // Current time used by countdown
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] =
+    useState(new Date());
 
 
-  // ------------------------------------
-  // Update current time every second
-  // ------------------------------------
+  // =======================================================
+  // LIVE CLOCK
+  // =======================================================
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
 
-  // ------------------------------------
-  // Search
-  // ------------------------------------
-  const effectiveSearch = globalSearch || localSearch;
+  // =======================================================
+  // EFFECTIVE SEARCH
+  // Global search has priority when supplied.
+  // =======================================================
+
+  const effectiveSearch =
+    String(globalSearch || localSearch || '')
+      .trim()
+      .toLowerCase();
 
 
-  // ------------------------------------
-  // Filter events
-  // ------------------------------------
-  const filteredSchedule = scheduleData.filter((item) => {
+  // =======================================================
+  // FILTER EVENTS
+  // =======================================================
+
+  const filteredSchedule = useMemo(() => {
+    return scheduleData.filter((item) => {
+      const title =
+        String(item.title || '').toLowerCase();
+
+      const venue =
+        String(item.venue || '').toLowerCase();
+
+      const category =
+        String(item.category || '').toLowerCase();
+
+      const coordinator =
+        String(item.coordinator || '').toLowerCase();
+
+      const time =
+        String(item.time || '').toLowerCase();
+
+      const description =
+        String(item.description || '').toLowerCase();
 
       const matchesDay =
         item.day === selectedDay;
@@ -205,15 +265,14 @@ export function ScheduleSection({
         selectedCategory === 'All Categories' ||
         item.category === selectedCategory;
 
-      const search =
-        effectiveSearch.toLowerCase();
-
       const matchesQuery =
-        item.title.toLowerCase().includes(search) ||
-        item.venue.toLowerCase().includes(search) ||
-        item.category.toLowerCase().includes(search) ||
-        item.coordinator.toLowerCase().includes(search) ||
-        item.time.toLowerCase().includes(search);
+        !effectiveSearch ||
+        title.includes(effectiveSearch) ||
+        venue.includes(effectiveSearch) ||
+        category.includes(effectiveSearch) ||
+        coordinator.includes(effectiveSearch) ||
+        time.includes(effectiveSearch) ||
+        description.includes(effectiveSearch);
 
       return (
         matchesDay &&
@@ -222,21 +281,75 @@ export function ScheduleSection({
         matchesQuery
       );
     });
+  }, [
+    scheduleData,
+    selectedDay,
+    selectedVenue,
+    selectedCategory,
+    effectiveSearch,
+  ]);
 
 
-  // ------------------------------------
-  // Page
-  // ------------------------------------
+  // =======================================================
+  // AVAILABLE CATEGORIES
+  // =======================================================
+
+  const categories = useMemo(() => {
+    const uniqueCategories = [
+      ...new Set(
+        scheduleData
+          .map((item) => item.category)
+          .filter(Boolean)
+      ),
+    ];
+
+    return uniqueCategories;
+  }, [scheduleData]);
+
+
+  // =======================================================
+  // RESET FILTERS
+  // =======================================================
+
+  const resetFilters = () => {
+    setSelectedVenue('All Venues');
+    setSelectedCategory('All Categories');
+    setLocalSearch('');
+  };
+
+
+  // =======================================================
+  // OPEN EVENT
+  // =======================================================
+
+  const openEvent = (item) => {
+    setSelectedEvent(item);
+  };
+
+
+  // =======================================================
+  // CLOSE EVENT
+  // =======================================================
+
+  const closeEvent = () => {
+    setSelectedEvent(null);
+  };
+
+
   return (
     <section
       id="schedule"
-      className="section-wrapper"
+      className="section-wrapper schedule-section"
+      aria-labelledby="schedule-title"
     >
 
       <div className="container schedule-container">
 
-        {/* Section Header */}
-        <div className="section-head">
+        {/* =================================================
+            SECTION HEADER
+        ================================================= */}
+
+        <header className="section-head schedule-header">
 
           <div className="section-tag">
             <IconClock size={16} />
@@ -246,207 +359,300 @@ export function ScheduleSection({
             </span>
           </div>
 
-          <h2>
-            Events & Competitions
+
+          <h2 id="schedule-title">
+            Events &amp; Competitions
           </h2>
+
 
           <p>
             Explore event timings, venues,
-            coordinators, and event details.
+            coordinators, and complete event details.
           </p>
 
-        </div>
+        </header>
 
 
-        {/* Day Selector */}
-        <div className="schedule-day-tabs">
+        {/* =================================================
+            DAY SELECTOR
+        ================================================= */}
 
-          {scheduleDays.map((d) => (
+        <div
+          className="schedule-day-tabs"
+          role="tablist"
+          aria-label="Event days"
+        >
 
-            <button
-              key={d.id}
-              onClick={() =>
-                setSelectedDay(d.id)
-              }
-              className={`schedule-day-btn ${
-                selectedDay === d.id
-                  ? 'active'
-                  : ''
-              }`}
-            >
+          {scheduleDays.map((day) => {
+            const isActive =
+              selectedDay === day.id;
 
-              <span>
-                {d.label}
-              </span>
-
-              <span
-                style={{
-                  fontSize: '0.8rem',
-                  opacity: 0.85,
-                  marginLeft: '0.4rem'
-                }}
+            return (
+              <button
+                key={day.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={`schedule-day-btn${
+                  isActive ? ' active' : ''
+                }`}
+                onClick={() =>
+                  setSelectedDay(day.id)
+                }
               >
-                ({d.shortDate})
-              </span>
 
-            </button>
+                <span className="schedule-day-label">
+                  {day.label}
+                </span>
 
-          ))}
+                <span className="schedule-day-date">
+                  {day.shortDate}
+                </span>
+
+              </button>
+            );
+          })}
 
         </div>
 
 
-        {/* Filters */}
+        {/* =================================================
+            FILTER PANEL
+        ================================================= */}
+
         <div className="filter-row">
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              flexWrap: 'wrap',
-              flex: 1
-            }}
-          >
+          <div className="schedule-filters">
 
-            <label
-              htmlFor="venue-select"
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: 'var(--text-muted)'
-              }}
-            >
-              Filter by Venue:
-            </label>
+            {/* Venue */}
 
+            <div className="filter-control">
 
-            <select
-              id="venue-select"
-              value={selectedVenue}
-              onChange={(e) =>
-                setSelectedVenue(e.target.value)
-              }
-              className="form-select"
-              style={{
-                maxWidth: '280px',
-                padding: '0.45rem 0.75rem',
-                fontSize: '0.85rem'
-              }}
-            >
+              <label htmlFor="venue-select">
+                Venue
+              </label>
 
-              {scheduleVenues.map((v) => (
-
-                <option
-                  key={v}
-                  value={v}
-                >
-                  {v}
-                </option>
-
-              ))}
-
-            </select>
-
-            <label
-                htmlFor="category-select"
-                style={{
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: 'var(--text-muted)'
-                }}
+              <select
+                id="venue-select"
+                value={selectedVenue}
+                onChange={(event) =>
+                  setSelectedVenue(
+                    event.target.value
+                  )
+                }
+                className="form-select"
               >
-                Category:
-            </label>
+
+                {scheduleVenues.map((venue) => (
+                  <option
+                    key={venue}
+                    value={venue}
+                  >
+                    {venue}
+                  </option>
+                ))}
+
+              </select>
+
+            </div>
+
+
+            {/* Category */}
+
+            <div className="filter-control">
+
+              <label htmlFor="category-select">
+                Category
+              </label>
 
               <select
                 id="category-select"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(event) =>
+                  setSelectedCategory(
+                    event.target.value
+                  )
+                }
                 className="form-select"
-                style={{
-                  maxWidth: '220px',
-                  padding: '0.45rem 0.75rem',
-                  fontSize: '0.85rem'
-                }}
               >
-                <option value="All Categories">All Categories</option>
-                <option value="Coding & Dev">Coding & Dev</option>
-                <option value="Web & Design">Web & Design</option>
-                <option value="General">General</option>
-                <option value="General & Management">General & Management</option>
-                <option value="Hospitality">Hospitality</option>
-                <option value="Gaming & Esports">Gaming & Esports</option>
-                <option value="AI & Data">AI & Data</option>
+
+                <option value="All Categories">
+                  All Categories
+                </option>
+
+                {categories.map((category) => (
+                  <option
+                    key={category}
+                    value={category}
+                  >
+                    {category}
+                  </option>
+                ))}
+
               </select>
+
+            </div>
+
+
+            {/* Reset */}
+
+            {(selectedVenue !== 'All Venues' ||
+              selectedCategory !== 'All Categories' ||
+              localSearch) && (
+
+              <button
+                type="button"
+                className="schedule-reset-btn"
+                onClick={resetFilters}
+              >
+                Reset
+              </button>
+
+            )}
 
           </div>
 
 
-          {/* Search */}
+          {/* =================================================
+              SEARCH
+          ================================================= */}
+
           <div className="search-input-wrapper">
 
             <IconSearch
-              size={16}
+              size={17}
               className="search-icon"
+              aria-hidden="true"
             />
 
             <input
-              type="text"
+              type="search"
               placeholder="Search events..."
-              value={effectiveSearch}
-              onChange={(e) =>
-                setLocalSearch(e.target.value)
+              value={localSearch}
+              onChange={(event) =>
+                setLocalSearch(
+                  event.target.value
+                )
               }
               className="search-input"
+              aria-label="Search events"
+              autoComplete="off"
             />
+
+            {localSearch && (
+              <button
+                type="button"
+                className="search-clear"
+                aria-label="Clear search"
+                onClick={() =>
+                  setLocalSearch('')
+                }
+              >
+                ×
+              </button>
+            )}
 
           </div>
 
         </div>
 
 
-        {/* Event List */}
-        <div className="schedule-items-list">
+        {/* =================================================
+            RESULT SUMMARY
+        ================================================= */}
+
+        <div className="schedule-result-bar">
+
+          <span>
+            <strong>
+              {filteredSchedule.length}
+            </strong>{' '}
+            {filteredSchedule.length === 1
+              ? 'event'
+              : 'events'}{' '}
+            found
+          </span>
+
+          {effectiveSearch && (
+            <span className="schedule-search-state">
+              Searching for "
+              {globalSearch || localSearch}
+              "
+            </span>
+          )}
+
+        </div>
+
+
+        {/* =================================================
+            EVENT LIST
+        ================================================= */}
+
+        <div
+          className="schedule-items-list"
+          aria-live="polite"
+        >
 
           {filteredSchedule.length === 0 ? (
 
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '3rem',
-                background: 'var(--bg-card)',
-                borderRadius: 'var(--radius-lg)',
-                color: 'var(--text-muted)'
-              }}
-            >
-              No events found for this
-              day, venue, or search.
+            <div className="schedule-empty-state">
+
+              <div className="schedule-empty-icon">
+                <IconSearch size={24} />
+              </div>
+
+              <h3>
+                No events found
+              </h3>
+
+              <p>
+                Try another search term or
+                change your filters.
+              </p>
+
+              <button
+                type="button"
+                className="schedule-empty-reset"
+                onClick={resetFilters}
+              >
+                Clear Filters
+              </button>
+
             </div>
 
           ) : (
 
-            filteredSchedule.map((item) => {
+            filteredSchedule.map((item, index) => {
 
-              // Calculate live timer/status
               const eventTimer =
                 getEventStatus(
                   item,
                   currentTime
                 );
 
+              const statusClass =
+                getStatusClass(
+                  eventTimer.status
+                );
 
               return (
 
-                <div
+                <article
                   key={item.id}
-                  className="schedule-card"
-                  onClick={() =>
-                    setSelectedEvent(item)
-                  }
+                  className={`schedule-card ${
+                    eventTimer.status === 'Live Now'
+                      ? 'is-live'
+                      : ''
+                  }`}
+                  style={{
+                    '--card-index': index,
+                  }}
                 >
 
-                  {/* Time & Status */}
+                  {/* =================================================
+                      TIME COLUMN
+                  ================================================= */}
+
                   <div className="schedule-time-col">
 
                     <div className="schedule-time-text">
@@ -458,43 +664,28 @@ export function ScheduleSection({
 
                       <IconCalendar
                         size={13}
-                        style={{
-                          display: 'inline',
-                          marginRight: '4px',
-                          verticalAlign: 'text-bottom'
-                        }}
+                        aria-hidden="true"
                       />
 
-                      {item.date}
+                      <span>
+                        {item.date}
+                      </span>
 
                     </div>
 
 
-                    {/* Dynamic Timer */}
+                    {/* Status */}
+
                     <span
-                      className={`badge ${
-                        eventTimer.status === 'Live Now'
-                          ? 'badge-live'
-                          : eventTimer.status === 'Completed'
-                            ? 'badge-completed'
-                            : 'badge-upcoming'
-                      }`}
-                      style={{
-                        alignSelf: 'flex-start',
-                        marginTop: '0.2rem'
-                      }}
+                      className={`badge ${statusClass}`}
                     >
 
-                      {eventTimer.status === 'Live Now' && (
-
+                      {eventTimer.status ===
+                        'Live Now' && (
                         <span
                           className="pulse-dot"
-                          style={{
-                            width: '6px',
-                            height: '6px'
-                          }}
+                          aria-hidden="true"
                         />
-
                       )}
 
                       {eventTimer.text}
@@ -504,29 +695,19 @@ export function ScheduleSection({
                   </div>
 
 
-                  {/* Event Details */}
+                  {/* =================================================
+                      MAIN EVENT DETAILS
+                  ================================================= */}
+
                   <div className="schedule-main-col">
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        flexWrap: 'wrap'
-                      }}
-                    >
+                    <div className="schedule-title-row">
 
                       <h3 className="schedule-item-title">
                         {item.title}
                       </h3>
 
-
-                      <span
-                        className="badge badge-upcoming"
-                        style={{
-                          fontSize: '0.7rem'
-                        }}
-                      >
+                      <span className="badge badge-upcoming schedule-category">
                         {item.category}
                       </span>
 
@@ -534,74 +715,95 @@ export function ScheduleSection({
 
 
                     {/* Venue */}
+
                     <div className="schedule-venue-row">
 
                       <IconMapPin
                         size={16}
-                        style={{
-                          flexShrink: 0
-                        }}
+                        aria-hidden="true"
                       />
 
                       <span>
                         Venue:{' '}
+
                         <strong>
                           {item.venue}
-                        </strong>{' '}
-                        ({item.locationDetail})
+                        </strong>
+
+                        {item.locationDetail && (
+                          <>
+                            {' '}
+                            ({item.locationDetail})
+                          </>
+                        )}
+
                       </span>
 
                     </div>
 
 
                     {/* Description */}
-                    <p className="schedule-desc">
-                      {item.description}
-                    </p>
+
+                    {item.description && (
+                      <p className="schedule-desc">
+                        {item.description}
+                      </p>
+                    )}
 
 
                     {/* Coordinator */}
-                    <div
-                      style={{
-                        fontSize: '0.8rem',
-                        color: 'var(--text-dim)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        marginTop: '0.2rem'
-                      }}
+
+                    {item.coordinator && (
+                      <div className="schedule-coordinator">
+
+                        <IconUser
+                          size={14}
+                          aria-hidden="true"
+                        />
+
+                        <span>
+                          Coordinator:{' '}
+
+                          <strong>
+                            {item.coordinator}
+                          </strong>
+                        </span>
+
+                      </div>
+                    )}
+
+                  </div>
+
+
+                  {/* =================================================
+                      ACTION
+                  ================================================= */}
+
+                  <button
+                    type="button"
+                    className="schedule-actions-col"
+                    onClick={() =>
+                      openEvent(item)
+                    }
+                    aria-label={`View details for ${item.title}`}
+                  >
+
+                    <span>
+                      View Details
+                    </span>
+
+                    <span
+                      className="schedule-action-arrow"
+                      aria-hidden="true"
                     >
+                      →
+                    </span>
 
-                      <IconUser size={14} />
+                  </button>
 
-                      <span>
-                        Coordinator:{' '}
-
-                        <strong
-                          style={{
-                            color:
-                              'var(--text-secondary)'
-                          }}
-                        >
-                          {item.coordinator}
-                        </strong>
-
-                      </span>
-
-                    </div>
-
-                  </div>
-
-
-                  {/* Action */}
-                  <div className="schedule-actions-col">
-                    <span style={{fontSize: '0.75rem',color: 'var(--text-dim)'}}>View Details →</span>
-                  </div>
-
-                </div>
+                </article>
 
               );
-
             })
 
           )}
@@ -611,23 +813,23 @@ export function ScheduleSection({
       </div>
 
 
-      {/* ------------------------------------
-          Event Detail Modal
-      ------------------------------------ */}
+      {/* =====================================================
+          EVENT MODAL
+      ===================================================== */}
 
       {selectedEvent && (
 
         <EventModal
-
           event={{
-
             name: selectedEvent.title,
 
             category:
               selectedEvent.category,
 
             location:
-              `${selectedEvent.venue} - ${selectedEvent.locationDetail}`,
+              `${selectedEvent.venue} - ${
+                selectedEvent.locationDetail || ''
+              }`,
 
             date:
               selectedEvent.date,
@@ -642,27 +844,18 @@ export function ScheduleSection({
               selectedEvent.guidelines || [],
 
             headDetails: {
-
               name:
                 selectedEvent.coordinator,
 
-              // IMPORTANT:
-              // These names must match
-              // scheduleData.js
               phone:
                 selectedEvent.contactphone || '',
 
               whatsapp:
-                selectedEvent.contactwhatsapp || ''
-
-            }
-
+                selectedEvent.contactwhatsapp || '',
+            },
           }}
 
-          onClose={() =>
-            setSelectedEvent(null)
-          }
-
+          onClose={closeEvent}
         />
 
       )}

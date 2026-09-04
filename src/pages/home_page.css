@@ -677,3 +677,477 @@ body {
     -webkit-text-fill-color: unset !important;
   }
 }
+
+
+
+/* =========================================================
+   SEMAPHORE 2K26 — CLEAN PREMIUM VISUAL SYSTEM
+   Dark ocean + clean cyan accents
+   ========================================================= */
+
+:root {
+  --sem-bg: #06121f;
+  --sem-bg-soft: #091b2b;
+  --sem-panel: rgba(10, 28, 44, 0.88);
+  --sem-panel-solid: #0b2032;
+  --sem-text: #f3f8fb;
+  --sem-muted: #91a7b8;
+  --sem-blue: #38bdf8;
+  --sem-cyan: #22d3ee;
+  --sem-teal: #2dd4bf;
+  --sem-border: rgba(125, 211, 252, 0.15);
+}
+
+/* ---------------------------------------------------------
+   GLOBAL
+   --------------------------------------------------------- */
+
+html {
+  background: var(--sem-bg);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--sem-bg);
+  color: var(--sem-text);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  color: #ffffff;
+  background: rgba(34, 211, 238, 0.35);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sem-cyan);
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #04101b;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: #16445d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #20718f;
+}
+
+/* ---------------------------------------------------------
+   INTRO
+   --------------------------------------------------------- */
+
+.intro-overlay {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(14, 165, 233, 0.11), transparent 28%),
+    #03101c;
+}
+
+.intro-noise {
+  opacity: 0.18;
+}
+
+.intro-glow {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 211, 238, 0.12),
+    rgba(14, 165, 233, 0.045) 42%,
+    transparent 70%
+  );
+}
+
+.intro-rule {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(34, 211, 238, 0.8),
+    transparent
+  );
+}
+
+.intro-tag {
+  color: #7dd3fc;
+}
+
+.intro-word-1 {
+  color: #f8fbfd;
+}
+
+.intro-word-2 {
+  color: #38bdf8;
+}
+
+.intro-word-3 {
+  color: #7892a5;
+}
+
+.intro-underline {
+  background: #22d3ee;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+}
+
+.intro-sub {
+  color: #7dd3fc;
+}
+
+.intro-corner {
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+/* ---------------------------------------------------------
+   HOME
+   --------------------------------------------------------- */
+
+.home {
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(14, 165, 233, 0.075),
+      transparent 34%
+    ),
+    #06121f;
+}
+
+/* Extremely subtle technical texture */
+
+.home::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(125, 211, 252, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 211, 252, 0.018) 1px, transparent 1px);
+
+  background-size: 64px 64px;
+
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8),
+    transparent 72%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8),
+    transparent 72%
+  );
+}
+
+/* ---------------------------------------------------------
+   BLOBS — VERY SUBTLE
+   --------------------------------------------------------- */
+
+.blob {
+  filter: blur(100px);
+  opacity: 0.5;
+}
+
+.blob-1 {
+  background: rgba(14, 165, 233, 0.075);
+}
+
+.blob-2 {
+  background: rgba(45, 212, 191, 0.045);
+}
+
+/* ---------------------------------------------------------
+   HERO
+   --------------------------------------------------------- */
+
+.hero {
+  min-height: 620px;
+  padding: 80px 8%;
+  gap: clamp(45px, 7vw, 90px);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.small-title {
+  color: #67e8f9;
+
+  background: linear-gradient(
+    90deg,
+    #38bdf8,
+    #67e8f9,
+    #2dd4bf,
+    #38bdf8
+  );
+
+  background-size: 200% auto;
+}
+
+.hero h1 {
+  color: #f5f9fb;
+  font-family: "Outfit", "Inter", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.hero h1 .accent {
+  color: #38bdf8;
+  text-shadow: 0 0 26px rgba(56, 189, 248, 0.18);
+}
+
+.description {
+  color: #91a7b8;
+}
+
+/* ---------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------- */
+
+.primary-btn,
+.secondary-btn {
+  min-height: 45px;
+  border-radius: 9px;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+.primary-btn {
+  color: #03131f;
+
+  background: #38bdf8;
+
+  border: 1px solid #38bdf8;
+
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.16);
+}
+
+.primary-btn:hover {
+  color: #021018;
+  background: #67e8f9;
+  border-color: #67e8f9;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(14, 165, 233, 0.22);
+}
+
+.secondary-btn {
+  color: #c6d8e3;
+  background: rgba(7, 24, 39, 0.72);
+  border-color: rgba(125, 211, 252, 0.2);
+}
+
+.secondary-btn:hover {
+  color: #effbff;
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(56, 189, 248, 0.45);
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------
+   EVENT CARD
+   --------------------------------------------------------- */
+
+.event-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 38, 57, 0.96),
+      rgba(7, 24, 39, 0.96)
+    );
+
+  border: 1px solid var(--sem-border);
+  border-radius: 16px;
+
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card-label {
+  color: #67e8f9;
+}
+
+.event-card h2 {
+  color: #eef8fc;
+  font-family: "Outfit", "Inter", sans-serif;
+}
+
+.status {
+  color: #8da4b5;
+}
+
+.status-dot {
+  background: #2dd4bf;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.45);
+}
+
+.countdown div {
+  background: rgba(3, 17, 29, 0.55);
+  border: 1px solid rgba(125, 211, 252, 0.08);
+}
+
+.countdown strong {
+  color: #67e8f9;
+}
+
+.countdown small {
+  color: #7891a3;
+}
+
+/* ---------------------------------------------------------
+   HELP SECTION
+   --------------------------------------------------------- */
+
+.help-section {
+  padding: 80px 8%;
+
+  background:
+    linear-gradient(
+      180deg,
+      #06121f 0%,
+      #071725 100%
+    );
+
+  border-top: 1px solid rgba(125, 211, 252, 0.08);
+}
+
+.help-section h2 {
+  color: #f0f7fa;
+  font-family: "Outfit", "Inter", sans-serif;
+  font-weight: 800;
+}
+
+.help-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(11, 32, 50, 0.92),
+      rgba(7, 24, 39, 0.94)
+    );
+
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 14px;
+
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.help-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.28),
+    0 0 22px rgba(14, 165, 233, 0.04);
+}
+
+.help-card h3 {
+  color: #eaf5f9;
+  font-family: "Outfit", "Inter", sans-serif;
+}
+
+.help-card p {
+  color: #8da5b6;
+}
+
+.help-card button,
+.card-btn {
+  color: #03131f;
+  background: #38bdf8;
+  border: 1px solid #38bdf8;
+  border-radius: 8px;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.help-card button:hover,
+.card-btn:hover {
+  color: #021018;
+  background: #67e8f9;
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(14, 165, 233, 0.18);
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 850px) {
+  .hero {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .help-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .event-card {
+    padding: 27px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero-anim,
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
