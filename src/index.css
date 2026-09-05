@@ -78,6 +78,25 @@ body {
   position: relative;
 }
 
+.app-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.main-content-wrapper {
+  min-width: 0;
+}
+
+.page-loader {
+  display: grid;
+  min-height: min(62vh, 34rem);
+  place-items: center;
+  padding: 2rem 1rem;
+  color: #9bdced;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 /* ---------------------------------------------------------
    SELECTION
    --------------------------------------------------------- */
@@ -160,6 +179,16 @@ canvas {
 
 img {
   height: auto;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+a,
+button {
+  overflow-wrap: break-word;
 }
 
 /* ---------------------------------------------------------
@@ -249,6 +278,94 @@ section {
 @media (max-width: 760px) {
   body {
     background-attachment: scroll;
+  }
+
+  /* Keep small screens light: these layers animate forever and add no
+     interaction feedback. Short entrance, hover and modal animations remain. */
+  .header-ambient,
+  .home .blob,
+  .ac-orb,
+  .ac-section::after,
+  .checklist-page-wrapper::after {
+    display: none !important;
+    animation: none !important;
+  }
+
+  .intro-glow {
+    display: none !important;
+    animation: none !important;
+  }
+
+  .small-title,
+  .ac-connector-h::after {
+    animation: none !important;
+  }
+
+  .small-title {
+    background-position: center;
+  }
+
+  /* Pulse only the marker the visitor is currently viewing. */
+  .semaphore-map-marker-pulse {
+    animation: none !important;
+    opacity: 0.28;
+    transform: scale(0.9);
+  }
+
+  .semaphore-map-marker.active .semaphore-map-marker-pulse {
+    animation: campusMarkerPulse 2.4s ease-out infinite !important;
+  }
+
+  /* Large live blur surfaces are costly while scrolling on budget phones. */
+  .site-header,
+  .menu-inner,
+  .modal-backdrop,
+  .ac-step,
+  .ac-btn-outline,
+  .checklist-hero-card,
+  .checklist-filter-toolbar,
+  .map-brand-overlay,
+  .map-help-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding-inline: 0.875rem;
+  }
+
+  h1 {
+    line-height: 1.08;
+  }
+
+  h2,
+  h3 {
+    line-height: 1.18;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: rgba(34, 211, 238, 0.16);
   }
 }
 

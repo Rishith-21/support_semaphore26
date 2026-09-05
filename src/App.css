@@ -834,11 +834,11 @@ body {
   }
 
   .facilities-grid {
-    order: 1;
+    order: 2;
   }
 
   .map-container-interactive {
-    order: 2;
+    order: 1;
     min-height: 300px;
   }
 

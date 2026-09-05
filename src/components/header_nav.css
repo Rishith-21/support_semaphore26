@@ -1570,3 +1570,32 @@ and (max-height: 500px) {
   .helpdesk-copy small { font-size: .46rem; }
   .helpdesk-copy strong { font-size: .73rem; }
 }
+
+/* Robust mobile dropdown positioning across iOS Safari and Android browsers. */
+@media (max-width: 900px) {
+  .header-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    left: 0;
+    max-height: calc(100dvh - 80px - env(safe-area-inset-bottom));
+  }
+
+  .menu-inner {
+    max-height: inherit;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-backdrop {
+    z-index: 899;
+    inset: 64px 0 0;
+    height: auto;
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 500px) {
+  .header-menu { top: calc(100% + 6px); max-height: calc(100dvh - 68px); }
+}

@@ -7,6 +7,7 @@ import {
   useMap,
 } from 'react-leaflet'
 import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 import { IconMapPin, IconSearch, IconMap } from './Icons'
 import './CampusMapSection.css'
@@ -243,13 +244,8 @@ export function CampusMapSection({
             <MapContainer
               center={NMAMIT_CENTER}
               zoom={16}
-              scrollWheelZoom={true}
+              scrollWheelZoom={false}
               className="nmamit-leaflet-map"
-              style={{
-                width: '100%',
-                height: '560px',
-                minHeight: '560px',
-              }}
             >
 
               {/* =============================================

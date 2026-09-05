@@ -76,7 +76,8 @@ export default function HomePage() {
       });
     };
     tick();
-    const id = setInterval(tick, 1000);
+    // The UI only displays minutes, so updating every second wastes work.
+    const id = setInterval(tick, 60000);
     return () => clearInterval(id);
   }, []);
 

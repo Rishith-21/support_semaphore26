@@ -197,6 +197,7 @@ export function EventSection({ events = [], guidelines, globalSearch = '' }) {
                       alt={evt?.name || 'Event'}
                       className="event-card-img"
                       loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}

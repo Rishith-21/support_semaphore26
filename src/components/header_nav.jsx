@@ -96,6 +96,7 @@ function HeaderNav() {
 
 
   return (
+    <>
     <header
       className={`site-header${scrolled ? ' is-scrolled' : ''}${
         menuOpen ? ' menu-active' : ''
@@ -141,6 +142,7 @@ function HeaderNav() {
               <img
                 src={nitteLogo}
                 alt="NITTE"
+                decoding="async"
               />
             </span>
 
@@ -157,6 +159,7 @@ function HeaderNav() {
               <img
                 src={samcaLogo}
                 alt="SAMCA"
+                decoding="async"
               />
             </span>
 
@@ -179,6 +182,7 @@ function HeaderNav() {
               <img
                 src="/Events_LOGO/sempahore_logo.png"
                 alt="Semaphore 2K26"
+                decoding="async"
               />
 
             </span>
@@ -304,20 +308,6 @@ function HeaderNav() {
 
 
       {/* =====================================================
-          MOBILE BACKDROP
-      ===================================================== */}
-
-      <button
-        className={`nav-backdrop${
-          menuOpen ? ' is-visible' : ''
-        }`}
-        aria-label="Close navigation menu"
-        tabIndex={menuOpen ? 0 : -1}
-        onClick={closeMenu}
-      />
-
-
-      {/* =====================================================
           BOTTOM SCAN LINE
       ===================================================== */}
 
@@ -327,6 +317,16 @@ function HeaderNav() {
       />
 
     </header>
+
+    {/* Kept outside the filtered sticky header for reliable mobile positioning. */}
+    <button
+      type="button"
+      className={`nav-backdrop${menuOpen ? ' is-visible' : ''}`}
+      aria-label="Close navigation menu"
+      tabIndex={menuOpen ? 0 : -1}
+      onClick={closeMenu}
+    />
+    </>
   );
 }
 
